@@ -1,26 +1,37 @@
-import sys
-sys.path.append("utils")
-from local_creds import *
 from langchain.prompts import PromptTemplate
-import json
-import requests
 from langchain.llms import OpenAI
 from langchain.embeddings import OpenAIEmbeddings
 
-request_url = f"https://{ASTRA_DB_ID}-{ASTRA_DB_REGION}.apps.astra.datastax.com/api/json/v1/{ASTRA_DB_NAMESPACE}/chat"
-request_headers = { 'x-cassandra-token': ASTRA_DB_APPLICATION_TOKEN,  'Content-Type': 'application/json'}
+import os
+from dotenv import load_dotenv
+from astrapy.db import AstraDBCollection
+
+load_dotenv()
+
+# Grab the Astra token and api endpoint from the environment
+token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
+api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
+openai_api_key = os.getenv("OPENAI_API_KEY")
+collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
+dimension = os.getenv("VECTOR_DIMENSION")
+
 
 # langchain openai interface
-llm = OpenAI(openai_api_key=OPENAI_API_KEY)
+llm = OpenAI(openai_api_key=openai_api_key)
 embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY) 
+
 
 from operator import itemgetter
 def get_similar_docs(query, number):
+    collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                   api_endpoint=api_endpoint, namespace=keyspace)
+
     print(query)
     embedding = list(embedding_model.embed_query(query))
-    payload = json.dumps({"find": {"sort": {"$vector": embedding},"options": {"limit": number}}})
-    relevant_docs = requests.request("POST", request_url, headers=request_headers, data=payload).json()['data']['documents']
-    docs_contents = [row['answer'] for row in relevant_docs] 
+    relevant_docs = collection.vector_find(embedding, number)
+
+    docs_contents = [row['answer'] for row in relevant_docs]
     docs_urls = [row['document_id'] for row in relevant_docs]
     return docs_contents, docs_urls
     
