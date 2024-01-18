@@ -12,9 +12,7 @@ from astrapy.db import AstraDBCollection
 
 #To do: add logger
 
-cmd = os.getcwd()
-env_path = cmd + "/../.env"
-load_dotenv(env_path)
+load_dotenv()
 
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")

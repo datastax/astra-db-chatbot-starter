@@ -6,9 +6,7 @@ import os
 from dotenv import load_dotenv
 from astrapy.db import AstraDBCollection
 
-cmd = os.getcwd()
-env_path = cmd + "/../.env"
-load_dotenv(env_path)
+load_dotenv()
 
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
