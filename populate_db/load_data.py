@@ -70,7 +70,7 @@ def main():
             else:
                 count+=1
                 result = collection.insert_one(to_insert)
-                print(result + "\t Count: "+str(count))
+                print(str(result) + "\t Count: "+str(count))
 
 if __name__ == "__main__":
     main()
