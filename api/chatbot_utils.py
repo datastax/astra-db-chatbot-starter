@@ -19,7 +19,7 @@ dimension = os.getenv("VECTOR_DIMENSION")
 
 # langchain openai interface
 llm = OpenAI(openai_api_key=openai_api_key)
-embedding_model = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY) 
+embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
 
 from operator import itemgetter
