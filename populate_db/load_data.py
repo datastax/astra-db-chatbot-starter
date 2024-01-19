@@ -21,7 +21,7 @@ keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
 dimension = os.getenv("VECTOR_DIMENSION")
-
+openai_api_key=os.getenv("OPENAI_API_KEY")
 input_data = os.getenv("SCRAPED_FILE")
 
 if not keyspace:
@@ -54,7 +54,6 @@ def main():
     # process faq data
     for webpage in input_data_faq:
         q_and_a_data = split_q_and_a.split(webpage)
-        count=0
         for i in range (0,len(q_and_a_data["questions"])):
             document_id = webpage["url"]
             question_id = i + 1
@@ -68,9 +67,8 @@ def main():
             if (question == " Cluster?") or (question == "?"):
                 print("Malformed question. Not adding to vector db.")
             else:
-                count+=1
                 result = collection.insert_one(to_insert)
-                print(str(result) + "\t Count: "+str(count))
+                print(f"{result} \tdocument_id: {document_id} question_id: {question_id}")
 
 if __name__ == "__main__":
     main()
