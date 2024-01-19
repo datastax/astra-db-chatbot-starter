@@ -18,8 +18,6 @@ if not keyspace:
 else:
     astra_db = AstraDB(token=token, api_endpoint=api_endpoint, namespace=keyspace)
 
-astra_db.create_collection(collection_name=collection_name, dimension=dimension)
-
 if collection_name in astra_db.get_collections()['status']['collections']:
     print(f"Collection '{collection_name}' already exists. New collection not created")
 else:
