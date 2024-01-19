@@ -29,7 +29,7 @@ def get_similar_docs(query, number):
 
     print(query)
     embedding = list(embedding_model.embed_query(query))
-    relevant_docs = collection.vector_find(embedding, number)
+    relevant_docs = collection.vector_find(embedding, limit=number)
 
     docs_contents = [row['answer'] for row in relevant_docs]
     docs_urls = [row['document_id'] for row in relevant_docs]
