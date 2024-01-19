@@ -25,13 +25,9 @@ else:
     llm = OpenAI(openai_api_key=openai_api_key, model=model)
 
 if not model:
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+    embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key)
 else:
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
-
-llm = OpenAI(openai_api_key=openai_api_key)
-embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key)
-
+    embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
 
 def get_similar_docs(query, number):
     if not keyspace:
