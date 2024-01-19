@@ -23,12 +23,12 @@ collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
 dimension = os.getenv("VECTOR_DIMENSION")
 
 input_data = os.getenv("SCRAPED_FILE")
+model = os.getenv("VECTOR_MODEL")
 
-if not keyspace:
-    keyspace = "default_keyspace"
-
-embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-
+if not model:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+else:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
 
 def get_input_data():
     scraped_results_file = input_data
@@ -46,8 +46,12 @@ def embed(text_to_embed):
     return embedding
 
 def main():
-    collection = AstraDBCollection(collection_name=collection_name, token=token,
-                                   api_endpoint=api_endpoint, namespace=keyspace)
+    if not keyspace:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint)
+    else:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint, namespace=keyspace)
 
     input_data_faq = get_input_data()
 

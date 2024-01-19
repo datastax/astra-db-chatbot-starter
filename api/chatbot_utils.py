@@ -16,17 +16,30 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
 dimension = os.getenv("VECTOR_DIMENSION")
 
+model = os.getenv("VECTOR_MODEL")
 
 # langchain openai interface
+if not model:
+    llm = OpenAI(openai_api_key=openai_api_key)
+else:
+    llm = OpenAI(openai_api_key=openai_api_key, model=model)
+
+if not model:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+else:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
+
 llm = OpenAI(openai_api_key=openai_api_key)
 embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
 
-from operator import itemgetter
 def get_similar_docs(query, number):
-    collection = AstraDBCollection(collection_name=collection_name, token=token,
-                                   api_endpoint=api_endpoint, namespace=keyspace)
-
+    if not keyspace:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint)
+    else:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint, namespace=keyspace)
     print(query)
     embedding = list(embedding_model.embed_query(query))
     relevant_docs = collection.vector_find(embedding, limit=number)
@@ -34,7 +47,6 @@ def get_similar_docs(query, number):
     docs_contents = [row['answer'] for row in relevant_docs]
     docs_urls = [row['document_id'] for row in relevant_docs]
     return docs_contents, docs_urls
-    
 # prompt that is sent to openai using the response from the vector database and the users original query
 prompt_boilerplate = "Answer the question posed in the user query section using the provided context. If you don't know the answer, just say that you don't know, don't try to make up an answer. Also remark on whether the provided context was useful in generating the answer and why."
 user_query_boilerplate = "USER QUERY: {userQuery}"
