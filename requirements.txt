@@ -1,3 +1,5 @@
+astrapy==0.7.0
+python-dotenv==1.0.0
 fastapi
 uvicorn[standard]
 openai
