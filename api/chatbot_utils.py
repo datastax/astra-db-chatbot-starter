@@ -15,14 +15,10 @@ keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
 dimension = os.getenv("VECTOR_DIMENSION")
-
 model = os.getenv("VECTOR_MODEL")
 
 # langchain openai interface
-if not model:
-    llm = OpenAI(openai_api_key=openai_api_key)
-else:
-    llm = OpenAI(openai_api_key=openai_api_key, model=model)
+llm = OpenAI(openai_api_key=openai_api_key)
 
 if not model:
     embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key)
@@ -36,7 +32,6 @@ def get_similar_docs(query, number):
     else:
         collection = AstraDBCollection(collection_name=collection_name, token=token,
                                        api_endpoint=api_endpoint, namespace=keyspace)
-    print(query)
     embedding = list(embedding_model.embed_query(query))
     relevant_docs = collection.vector_find(embedding, limit=number)
 
@@ -58,10 +53,9 @@ def build_full_prompt(query):
     nl = "\n"
     combined_prompt_template = PromptTemplate.from_template(prompt_boilerplate + nl + user_query_boilerplate + nl + document_context_boilerplate + nl + final_answer_boilerplate)
     filled_prompt_template = combined_prompt_template.format(userQuery=query, documentContext=docs_single_string)
-    print(filled_prompt_template)
     return filled_prompt_template, url
 
 
 def send_to_openai(full_prompt):
-    return llm.predict(full_prompt)
+    return llm.invoke(full_prompt)
 
