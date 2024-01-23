@@ -8,6 +8,12 @@
 4. Click to deploy the app to Vercel: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/datastax/astra-db-chatbot-starter&env=ASTRA_DB_NAMESPACE,OPENAI_API_KEY,ASTRA_DB_ID,ASTRA_DB_REGION,ASTRA_DB_APPLICATION_TOKEN).
   
    Set your environment variables to the values created in steps 1 and 3.
+##
+Set python virtual environment on linux
+   apt-get install python3.11-venv
+   python3 -m venv venv
+   source venv/bin/activate
+   clone repository and install all requirements.txt
 
 ## Setting up your database and seeding with data
 1. Navigate to your IDE, set up the following environment variables:
