@@ -1,23 +1,37 @@
 import json
 import os
-import requests
 
 import split_q_and_a
 
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 import time
-import sys
-sys.path.append("utils")
-from local_creds import *
-#To do: add logger
-embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
-request_url = f"https://{ASTRA_DB_ID}-{ASTRA_DB_REGION}.apps.astra.datastax.com/api/json/v1/{ASTRA_DB_NAMESPACE}/chat"
-request_headers = { 'x-cassandra-token': ASTRA_DB_APPLICATION_TOKEN,  'Content-Type': 'application/json'}
+from dotenv import load_dotenv
+from astrapy.db import AstraDBCollection
+
+#To do: add logger
+
+load_dotenv()
+
+# Grab the Astra token and api endpoint from the environment
+token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
+api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
+openai_api_key = os.getenv("OPENAI_API_KEY")
+collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
+dimension = os.getenv("VECTOR_DIMENSION")
+openai_api_key=os.getenv("OPENAI_API_KEY")
+input_data = os.getenv("SCRAPED_FILE")
+model = os.getenv("VECTOR_MODEL")
+
+if not model:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+else:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
 
 def get_input_data():
-    scraped_results_file = INPUT_DATA
+    scraped_results_file = input_data
     with open(scraped_results_file) as f:
         scraped_data = json.load(f)
 
@@ -31,15 +45,19 @@ def embed(text_to_embed):
     embedding = list(embeddings.embed_query(text_to_embed))
     return embedding
 
-
 def main():
+    if not keyspace:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint)
+    else:
+        collection = AstraDBCollection(collection_name=collection_name, token=token,
+                                       api_endpoint=api_endpoint, namespace=keyspace)
 
     input_data_faq = get_input_data()
 
     # process faq data
     for webpage in input_data_faq:
         q_and_a_data = split_q_and_a.split(webpage)
-        count=0
         for i in range (0,len(q_and_a_data["questions"])):
             document_id = webpage["url"]
             question_id = i + 1
@@ -48,14 +66,13 @@ def main():
             text_to_embed = f"{question}"
             embedding = embed(text_to_embed)
             time.sleep(1)
-            to_insert = {"insertOne": {"document": {"document_id": document_id, "question_id": question_id, "answer": answer, "question": question, "$vector": embedding}}}
+            to_insert = {"document_id": document_id, "question_id": question_id, "answer": answer,
+                             "question": question, "$vector": embedding}
             if (question == " Cluster?") or (question == "?"):
                 print("Malformed question. Not adding to vector db.")
             else:
-                response = requests.request("POST", request_url, headers=request_headers, data=json.dumps(to_insert))
-                print(response.text + "\t Count: "+str(count))
-                count+=1
-
+                result = collection.insert_one(to_insert)
+                print(f"{result} \tdocument_id: {document_id} question_id: {question_id}")
 
 if __name__ == "__main__":
     main()

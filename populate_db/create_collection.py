@@ -1,25 +1,36 @@
-import json
-import requests
-
+import os
 import sys
-sys.path.append('utils')
-from local_creds import *
 
-url = f"https://{ASTRA_DB_ID}-{ASTRA_DB_REGION}.apps.astra.datastax.com/api/json/v1/{ASTRA_DB_NAMESPACE}"
-print(url)
+from dotenv import load_dotenv
 
-payload = json.dumps({"createCollection": {
-    "name": "chat",
-    "options" : {
-        "vector" : {
-            "size" : 1536,
-            "function" : "cosine"}}}})
+from astrapy.db import AstraDB
 
-headers = {
-    'x-cassandra-token': ASTRA_DB_APPLICATION_TOKEN,
-    'Content-Type': 'application/json'
-}
+load_dotenv()
 
-response = requests.request("POST", url, headers=headers, data=payload)
+# Grab the Astra token and api endpoint from the environment
+token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
+api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
+collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
+dimension = os.getenv("VECTOR_DIMENSION")
 
-print(response.text)
+# check that dimension is defined and is an integer
+if dimension == None:
+    print("environment variable 'VECTOR_DIMENSION' not defined")
+    sys.exit()
+else:
+    if not dimension.isdigit():
+        print("environment variable 'VECTOR_DIMENSION' not integer")
+        sys.exit()
+
+# check that keyspace is defined
+if not keyspace:
+    astra_db = AstraDB(token=token, api_endpoint=api_endpoint)
+else:
+    astra_db = AstraDB(token=token, api_endpoint=api_endpoint, namespace=keyspace)
+
+# create collection if it doesn't exist
+if collection_name in astra_db.get_collections()['status']['collections']:
+    print(f"Collection '{collection_name}' already exists. New collection not created")
+else:
+    astra_db.create_collection(collection_name=collection_name, dimension=dimension)
