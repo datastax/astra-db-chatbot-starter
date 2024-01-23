@@ -3,7 +3,7 @@ import os
 
 import split_q_and_a
 
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 import time
 
