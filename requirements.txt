@@ -4,6 +4,4 @@ fastapi==0.109.0
 uvicorn[standard]
 openai==1.8.0
 tiktoken==0.5.2
-langchain-community==0.0.13
-langchain-core==0.1.14
 langchain-openai==0.0.3
