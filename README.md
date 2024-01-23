@@ -19,6 +19,7 @@
 - VECTOR_DIMENSION=Collection to be created with number of vector dimensions
 - SCRAPED_FILE=Scrapped data file location
 - OPENAI_API_KEY=api key for OPENAI
+- VECTOR_MODEL = Vector Model to be used. Future, models are expected to change due to deprecation and expect new model to be used 
 
 2. Install Python dependencies:
 
