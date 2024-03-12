@@ -10,8 +10,8 @@ load_dotenv()
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
-keyspace = os.getenv("ASTRA_DB_KEYSPACE")
-collection_name = os.getenv("ASTRA_DB_COLLECTION_NAME")
+keyspace = os.getenv("ASTRA_DB_NAMESPACE")
+collection_name = os.getenv("ASTRA_DB_COLLECTION")
 dimension = os.getenv("VECTOR_DIMENSION")
 
 # check that dimension is defined and is an integer

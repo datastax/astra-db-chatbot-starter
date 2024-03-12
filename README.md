@@ -19,11 +19,11 @@ Set python virtual environment on linux
 1. Navigate to your IDE, set up the following environment variables:
 
 - ASTRA_DB_APPLICATION_TOKEN=Generate app token for Astra database
-- ASTRA_DB_KEYSPACE=existing Astra Namespace/keyspace in a vector enabled DB
-- ASTRA_DB_API_ENDPOINT="https://ASTRA_DB_ID-ASTRA_REGIN.apps.astra.datastax.com
-- ASTRA_DB_COLLECTION_NAME=Name of collection/table to be created in Astra database
+- ASTRA_DB_NAMESPACE=existing Astra DB namespace in vector database
+- ASTRA_DB_API_ENDPOINT="https://ASTRA_DB_ID-ASTRA_REGION.apps.astra.datastax.com"
+- ASTRA_DB_COLLECTION=Name of collection/table to be created in Astra database
 - VECTOR_DIMENSION=Collection to be created with number of vector dimensions
-- SCRAPED_FILE=Scrapped data file location
+- SCRAPED_FILE=Scraped data file location
 - OPENAI_API_KEY=api key for OPENAI
 - VECTOR_MODEL = Vector Model to be used. Future, models are expected to change due to deprecation and expect new model to be used 
 
