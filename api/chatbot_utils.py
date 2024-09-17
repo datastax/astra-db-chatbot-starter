@@ -10,7 +10,7 @@ load_dotenv()
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
-namespace = os.getenv("ASTRA_DB_NAMESPACE")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 collection_name = os.getenv("ASTRA_DB_COLLECTION")
 model = os.getenv("VECTOR_MODEL")
@@ -24,12 +24,12 @@ else:
     embedding_model = OpenAIEmbeddings(openai_api_key=openai_api_key, model=model)
 
 def get_similar_docs(query, number):
-    if not namespace:
+    if not keyspace:
         collection = AstraDBCollection(collection_name=collection_name, token=token,
                                        api_endpoint=api_endpoint)
     else:
         collection = AstraDBCollection(collection_name=collection_name, token=token,
-                                       api_endpoint=api_endpoint, namespace=namespace)
+                                       api_endpoint=api_endpoint, keyspace=keyspace)
     embedding = list(embedding_model.embed_query(query))
     relevant_docs = collection.vector_find(embedding, limit=number)
 

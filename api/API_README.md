@@ -13,7 +13,7 @@ pip3 install -r requirements.txt
 Input all authentication credentials into .env file. This file requires below Astra information.
 
     - ASTRA_DB_APPLICATION_TOKEN=Generate app token for Astra database
-    - ASTRA_DB_NAMESPACE=existing Astra DB namespace in vector databaseB
+    - ASTRA_DB_KEYSPACE=A keyspace in your Astra DB database. For collections in Vector databases, the default is `default_keyspace`.
     - ASTRA_DB_API_ENDPOINT="https://ASTRA_DB_ID-ASTRA_REGIN.apps.astra.datastax.com
     - ASTRA_DB_COLLECTION=Name of collection/table to be created in Astra database
     - VECTOR_DIMENSION=Collection to be created with number of vector dimensions

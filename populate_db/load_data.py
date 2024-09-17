@@ -17,7 +17,7 @@ load_dotenv()
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
-namespace = os.getenv("ASTRA_DB_NAMESPACE")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 collection_name = os.getenv("ASTRA_DB_COLLECTION")
 dimension = os.getenv("VECTOR_DIMENSION")
@@ -46,12 +46,12 @@ def embed(text_to_embed):
     return embedding
 
 def main():
-    if not namespace:
+    if not keyspace:
         collection = AstraDBCollection(collection_name=collection_name, token=token,
                                        api_endpoint=api_endpoint)
     else:
         collection = AstraDBCollection(collection_name=collection_name, token=token,
-                                       api_endpoint=api_endpoint, namespace=namespace)
+                                       api_endpoint=api_endpoint, keyspace=keyspace)
 
     input_data_faq = get_input_data()
 

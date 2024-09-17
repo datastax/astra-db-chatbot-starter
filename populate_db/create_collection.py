@@ -10,7 +10,7 @@ load_dotenv()
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
-namespace = os.getenv("ASTRA_DB_NAMESPACE")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 collection_name = os.getenv("ASTRA_DB_COLLECTION")
 dimension = os.getenv("VECTOR_DIMENSION")
 
@@ -23,11 +23,11 @@ else:
         print("environment variable 'VECTOR_DIMENSION' not integer")
         sys.exit()
 
-# check that namespace is defined
-if not namespace:
+# check that keyspace is defined
+if not keyspace:
     astra_db = AstraDB(token=token, api_endpoint=api_endpoint)
 else:
-    astra_db = AstraDB(token=token, api_endpoint=api_endpoint, namespace=namespace)
+    astra_db = AstraDB(token=token, api_endpoint=api_endpoint, keyspace=keyspace)
 
 # create collection if it doesn't exist
 if collection_name in astra_db.get_collections()['status']['collections']:
