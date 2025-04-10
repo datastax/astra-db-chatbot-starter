@@ -31,7 +31,7 @@ export default function Home() {
         const res = await axios.post(`/api/chat`, {
           prompt: question,
         });
-        const reply = JSON.parse(res.data);
+        const reply = res.data;
         setMessages(prev => {
           return update(prev, {
             [prev.length - 1]: {

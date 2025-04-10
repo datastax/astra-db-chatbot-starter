@@ -3,34 +3,39 @@ import sys
 
 from dotenv import load_dotenv
 
-from astrapy.db import AstraDB
+from astrapy import DataAPIClient
+from astrapy.info import CollectionDefinition
 
 load_dotenv()
 
 # Grab the Astra token and api endpoint from the environment
 token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
-namespace = os.getenv("ASTRA_DB_NAMESPACE")
+keyspace = os.getenv("ASTRA_DB_KEYSPACE")
 collection_name = os.getenv("ASTRA_DB_COLLECTION")
-dimension = os.getenv("VECTOR_DIMENSION")
+dimension_str = os.getenv("VECTOR_DIMENSION")
 
-# check that dimension is defined and is an integer
-if dimension == None:
+# check that the dimension is defined and is an integer
+if dimension_str is None:
     print("environment variable 'VECTOR_DIMENSION' not defined")
     sys.exit()
 else:
-    if not dimension.isdigit():
+    if not dimension_str.isdigit():
         print("environment variable 'VECTOR_DIMENSION' not integer")
         sys.exit()
 
-# check that namespace is defined
-if not namespace:
-    astra_db = AstraDB(token=token, api_endpoint=api_endpoint)
-else:
-    astra_db = AstraDB(token=token, api_endpoint=api_endpoint, namespace=namespace)
+astra_db_client = DataAPIClient()
+database = astra_db_client.get_database(
+    api_endpoint,
+    token=token,
+    keyspace=keyspace,
+)
 
-# create collection if it doesn't exist
-if collection_name in astra_db.get_collections()['status']['collections']:
-    print(f"Collection '{collection_name}' already exists. New collection not created")
-else:
-    astra_db.create_collection(collection_name=collection_name, dimension=dimension)
+collection = database.create_collection(
+    collection_name,
+    definition=(
+        CollectionDefinition.builder().set_vector_dimension(int(dimension_str)).build()
+    ),
+)
+
+print(f"Collection {collection.name} created successfully.")

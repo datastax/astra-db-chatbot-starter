@@ -1,7 +1,8 @@
-astrapy==0.7.0
-python-dotenv==1.0.0
-fastapi==0.109.0
-uvicorn[standard]
-openai==1.8.0
-tiktoken==0.5.2
-langchain-openai==0.0.3
+astrapy>=2.0.0,<3.0.0
+fastapi>=0.115.0
+langchain>=0.3
+langchain_community>=0.3
+langchain_openai>=0.3
+python-dotenv>=1.0.0
+tiktoken>=0.9.0
+uvicorn[standard]>=0.34.0
