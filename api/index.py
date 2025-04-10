@@ -1,8 +1,10 @@
+from api.chatbot_utils import (
+    build_full_prompt,
+    send_to_openai,
+)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from api.chatbot_utils import *
-import json
 
 origins = [
     "http://localhost",
@@ -26,4 +28,4 @@ class Query(BaseModel):
 @app.post("/api/chat")
 async def fill_and_send_prompt(query: Query):
     docs, url = build_full_prompt(query.prompt)
-    return json.dumps({"text": send_to_openai(docs), "url" : url})
+    return {"text": send_to_openai(docs), "url": url}
